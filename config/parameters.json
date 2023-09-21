@@ -1,0 +1,7 @@
+{
+  "epochs" : 100,
+  "learn_rate" : 0.01,
+  "batch_size" : 16,
+  "augmentation": 0,
+  "training_data_dir" : "./data"
+}
