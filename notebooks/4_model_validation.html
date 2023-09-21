@@ -152,7 +152,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    Cuting line detection of chicory
+                    Cutting line detection of chicory
                 </a>
             </li>
         </ul>
@@ -466,7 +466,7 @@ document.write(`
 	<span class="n">b1</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a1</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 	<span class="c1"># Predict line </span>
-	<span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">transformed_image</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">())</span> <span class="c1"># Unsqueeze to solve for missing batch dimension</span>
+	<span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">transformed_image</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span> <span class="c1"># Unsqueeze to solve for missing batch dimension</span>
 	<span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 
 	<span class="c1"># Scale prediction to account for resizing</span>
@@ -496,30 +496,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">RuntimeError</span><span class="g g-Whitespace">                              </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">40</span>
-<span class="g g-Whitespace">     </span><span class="mi">37</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a1</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span> <span class="c1"># Predict line </span>
-<span class="ne">---&gt; </span><span class="mi">40</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">transformed_image</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">())</span> <span class="c1"># Unsqueeze to solve for missing batch dimension</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="c1"># Scale prediction to account for resizing</span>
-
-<span class="nn">File c:\python39\lib\site-packages\torch\cuda\__init__.py:216,</span> in <span class="ni">_lazy_init</span><span class="nt">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">212</span>     <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">213</span>         <span class="s2">&quot;libcudart functions unavailable. It looks like you have a broken build?&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">214</span> <span class="c1"># This function throws if there&#39;s a driver initialization error, no GPUs</span>
-<span class="g g-Whitespace">    </span><span class="mi">215</span> <span class="c1"># are found or any other error occurs</span>
-<span class="ne">--&gt; </span><span class="mi">216</span> <span class="n">torch</span><span class="o">.</span><span class="n">_C</span><span class="o">.</span><span class="n">_cuda_init</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">217</span> <span class="c1"># Some of the queued calls may reentrantly call _lazy_init();</span>
-<span class="g g-Whitespace">    </span><span class="mi">218</span> <span class="c1"># we need to just return without initializing in that case.</span>
-<span class="g g-Whitespace">    </span><span class="mi">219</span> <span class="c1"># However, we must not let any *other* threads in!</span>
-<span class="g g-Whitespace">    </span><span class="mi">220</span> <span class="n">_tls</span><span class="o">.</span><span class="n">is_initializing</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="ne">RuntimeError</span>: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx
-</pre></div>
-</div>
-<img alt="../_images/ea8f3015c6fb9764a74d01b0a48e65ac5344bd787e3f90da66cad34d7439fc0c.png" src="../_images/ea8f3015c6fb9764a74d01b0a48e65ac5344bd787e3f90da66cad34d7439fc0c.png" />
+<img alt="../_images/a81f4c531145c5b8af151c657555167fdc779fade8e07d12e8b32ad68a72e13d.png" src="../_images/a81f4c531145c5b8af151c657555167fdc779fade8e07d12e8b32ad68a72e13d.png" />
 </div>
 </div>
 </section>
