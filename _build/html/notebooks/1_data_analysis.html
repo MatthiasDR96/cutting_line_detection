@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data preparation" href="2_data_preparation.html" />
-    <link rel="prev" title="Cuting line detection of chicory" href="../intro.html" />
+    <link rel="prev" title="Cutting line detection of chicory" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -153,7 +153,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    Cuting line detection of chicory
+                    Cutting line detection of chicory
                 </a>
             </li>
         </ul>
@@ -382,9 +382,6 @@ document.write(`
 	<span class="c1"># Draw ground truth rectangle in red</span>
 	<span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">3</span><span class="p">])),</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 
-	<span class="c1"># Draw ground truth cutting line (based on two points) in green</span>
-	<span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">3</span><span class="p">])),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span> 
-
 	<span class="c1"># Convert line points to a slope and an intercept</span>
 	<span class="n">a</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">line_label</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">line_label</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">line_label</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 	<span class="n">b</span> <span class="o">=</span> <span class="n">line_label</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="o">*</span><span class="n">line_label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -396,6 +393,9 @@ document.write(`
 	<span class="c1"># Draw the extended line in violet</span>
 	<span class="n">im</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
+	<span class="c1"># Draw ground truth cutting line (based on two points) in green</span>
+	<span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_label</span><span class="p">[</span><span class="mi">3</span><span class="p">])),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span> 
+
 	<span class="c1"># Show the image</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -403,16 +403,16 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/2e767be11f032acc34a62f03a3a0623e50902e9ed76582e535c5cf7e05b1bfc3.png" src="../_images/2e767be11f032acc34a62f03a3a0623e50902e9ed76582e535c5cf7e05b1bfc3.png" />
-<img alt="../_images/1793736e2fba37ebaeba48bf73ae85f84f1fa6aac0b6afe92b7b8c23420bd420.png" src="../_images/1793736e2fba37ebaeba48bf73ae85f84f1fa6aac0b6afe92b7b8c23420bd420.png" />
-<img alt="../_images/8cac0e58f76256a0a66a08f61a69f51844d0e3dd33de2fa192acfbf4c86d773e.png" src="../_images/8cac0e58f76256a0a66a08f61a69f51844d0e3dd33de2fa192acfbf4c86d773e.png" />
-<img alt="../_images/35e7ecc5ab71a1651fbe6ee4a1dfb46bd3482945bec895f4ca4561c771ffd62b.png" src="../_images/35e7ecc5ab71a1651fbe6ee4a1dfb46bd3482945bec895f4ca4561c771ffd62b.png" />
-<img alt="../_images/0a4584457ff930e32a8421ede7f0970cb401b3daf4bd58e97b14d90b1175005c.png" src="../_images/0a4584457ff930e32a8421ede7f0970cb401b3daf4bd58e97b14d90b1175005c.png" />
-<img alt="../_images/242375ef808f08a0ce25a800990896f1f3bc715c8bec81fc3078d568858ddecc.png" src="../_images/242375ef808f08a0ce25a800990896f1f3bc715c8bec81fc3078d568858ddecc.png" />
-<img alt="../_images/23e08a9632a8c05a93771e32321b20f592b9d1a4e81224658382866c8872c2b6.png" src="../_images/23e08a9632a8c05a93771e32321b20f592b9d1a4e81224658382866c8872c2b6.png" />
-<img alt="../_images/4b7d62b90bc6eb3fc6b3e71e2c8cdf2d63254a742925898f3465c4b6a6002715.png" src="../_images/4b7d62b90bc6eb3fc6b3e71e2c8cdf2d63254a742925898f3465c4b6a6002715.png" />
-<img alt="../_images/1dfc85ffdbaad5e7b55e5bb6ac45dc2daddea48b7dd1795ff394825b309b45c7.png" src="../_images/1dfc85ffdbaad5e7b55e5bb6ac45dc2daddea48b7dd1795ff394825b309b45c7.png" />
-<img alt="../_images/585d781b5518abcac1c954d83e799579845ec825f442f34902db0c4a81362d0f.png" src="../_images/585d781b5518abcac1c954d83e799579845ec825f442f34902db0c4a81362d0f.png" />
+<img alt="../_images/d8e05722f5e483738431ca920108a9de01ff0f82555417b5c71b5271d62b3347.png" src="../_images/d8e05722f5e483738431ca920108a9de01ff0f82555417b5c71b5271d62b3347.png" />
+<img alt="../_images/b95b040cfcefacb59611edfcfee054343970508a6e67af8d11d92f900651b348.png" src="../_images/b95b040cfcefacb59611edfcfee054343970508a6e67af8d11d92f900651b348.png" />
+<img alt="../_images/d7ffc334d712797e71d9b22c07f72525e13e26e93437d32eeda5b0ddb98800a0.png" src="../_images/d7ffc334d712797e71d9b22c07f72525e13e26e93437d32eeda5b0ddb98800a0.png" />
+<img alt="../_images/a96b9b8b3c97c5fee5643a3f9dcdfd96696ee390a3823cae57563840e022e3aa.png" src="../_images/a96b9b8b3c97c5fee5643a3f9dcdfd96696ee390a3823cae57563840e022e3aa.png" />
+<img alt="../_images/8c9150e7a6fb0902eae4ba089dd17b88bb651581e43e4a299b09ae89d0d0b7b2.png" src="../_images/8c9150e7a6fb0902eae4ba089dd17b88bb651581e43e4a299b09ae89d0d0b7b2.png" />
+<img alt="../_images/8b48be4c494b489ef6000e946f648790336d57541e15b989516a6e6efb84b611.png" src="../_images/8b48be4c494b489ef6000e946f648790336d57541e15b989516a6e6efb84b611.png" />
+<img alt="../_images/80fc8dc7c4ad6022ac095116471040310494b9449bd0e6adc5eace1b50821c0f.png" src="../_images/80fc8dc7c4ad6022ac095116471040310494b9449bd0e6adc5eace1b50821c0f.png" />
+<img alt="../_images/a9f5b25311f60a760804793adb39abc5b3a89a4ca50088e454a892d38b256db9.png" src="../_images/a9f5b25311f60a760804793adb39abc5b3a89a4ca50088e454a892d38b256db9.png" />
+<img alt="../_images/bd94c3c2dade01d17e5948c3bb14d56480c5ca380c1b3d8a9a1e96d3f4528232.png" src="../_images/bd94c3c2dade01d17e5948c3bb14d56480c5ca380c1b3d8a9a1e96d3f4528232.png" />
+<img alt="../_images/32394648a6c2253027007d6f0a78f1842da3bc0ce152a3dfdc7265d411efc966.png" src="../_images/32394648a6c2253027007d6f0a78f1842da3bc0ce152a3dfdc7265d411efc966.png" />
 </div>
 </div>
 </section>
@@ -454,7 +454,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Cuting line detection of chicory</p>
+        <p class="prev-next-title">Cutting line detection of chicory</p>
       </div>
     </a>
     <a class="right-next"

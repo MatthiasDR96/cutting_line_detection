@@ -153,7 +153,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    Cuting line detection of chicory
+                    Cutting line detection of chicory
                 </a>
             </li>
         </ul>
@@ -381,41 +381,42 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set training parameters</span>
-<span class="n">epochs</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span>
-<span class="n">augmentation</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># Number of times that the model sees the whole dataset</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="c1"># Step size of the weight adjustment to reduce the error of the model</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span> <span class="c1"># Number of samples processed before the model is updated</span>
+<span class="n">augmentation</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Boolean to set the usage of data augmentation on or off</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>The class below defines the dataset class. This class defines how the images and labels of each sample are processed before sent to the neural network. Before doing this, the image is read and processed, as well as the labels. By default, the image is resized, normalized, and converted to a tensor to be read by the neural network. When data augmentation is activated for the training, also other transformations are applied to the image. It is important that also the labels (cutting line) undergoes the same transformation as the image does. Finally, the transformed image and label are send to the neural network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This class impements the Dataset</span>
 <span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
 
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">paths</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">paths</span> <span class="c1"># All file paths to the images</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span> <span class="c1"># Boolean to set the usage of data augmentation on or off</span>
 
 	<span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span>
 
 	<span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
 
-		<span class="c1"># Retrieve data sample</span>
+		<span class="c1"># Retrieve image file path</span>
 		<span class="n">img_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
 		<span class="c1"># Read image and convert to RGB space</span>
 		<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span> 
 		<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
 
-		<span class="c1"># Get label</span>
+		<span class="c1"># Get label [x1, y1, x2, y2]</span>
 		<span class="n">key</span> <span class="o">=</span> <span class="n">img_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">label_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../data/labels/&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 		<span class="n">labeldata</span> <span class="o">=</span> <span class="n">label_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
 
-		<span class="c1"># Get keypoints</span>
+		<span class="c1"># Get keypoints [(x1, y1), (x2, y2)]</span>
 		<span class="n">keypoints</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">float</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">5</span><span class="p">])),</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">labeldata</span><span class="p">[</span><span class="mi">7</span><span class="p">]))]</span>
 
 		<span class="c1"># Define augmentation pipeline</span>
@@ -443,7 +444,7 @@ document.write(`
 		<span class="n">transformed_image</span> <span class="o">=</span> <span class="n">transformed</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">]</span>
 		<span class="n">transformed_keypoints</span> <span class="o">=</span> <span class="n">transformed</span><span class="p">[</span><span class="s1">&#39;keypoints&#39;</span><span class="p">]</span>
 
-		<span class="c1"># Get target</span>
+		<span class="c1"># Get target [x1, y1, x2, y2]</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">transformed_keypoints</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">transformed_keypoints</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">transformed_keypoints</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">transformed_keypoints</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
 
 		<span class="k">return</span> <span class="n">transformed_image</span><span class="p">,</span> <span class="n">target</span>
@@ -451,6 +452,7 @@ document.write(`
 </div>
 </div>
 </div>
+<p>In the next step, the data is read from the database and assigned to the dataset class. We will apply data augmentation to the training set but not on the validation set as these images should reflect the real situation properly.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load csv files containing the image file paths</span>
@@ -464,12 +466,35 @@ document.write(`
 </div>
 </div>
 </div>
+<p>Next, some dataloaders are defined for the train and validation set. These are able to load batches of data with a predefined size and send it to the network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create data loaders that extract batches from the dataset with a certain batch size</span>
 <span class="n">train_dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">valid_dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">dataloaders</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="n">train_dl</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">:</span> <span class="n">valid_dl</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Below, two cost functions are defined. A line can be represented by a point and an angle. The first loss function makes sure that one of the two predicted points lies as close as possible to the center of the two points defined by the line label. This to eliminate possible negative effects that result from the fact that the points have no fixed order. Sometimes the first of the two points in the label can represent the point at the right side of the chicory, and sometimes it can represent the left side. The second loss function makes sure that the predicted line lies collinear with the ground truth line. It does this by computing the cosine similarity and taking the inverse cosine of the result. This value is set in degrees.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Computes the Euclidean distance between the first predicted point and the center of the ground truth points</span>
+<span class="k">def</span> <span class="nf">loss_rmse_fun</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+
+	<span class="c1"># Only get first xy point of prediction</span>
+	<span class="n">xy1_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">pred</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">pred</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span> 
+
+	<span class="c1"># Get center of two ground truth points</span>
+	<span class="n">y_centerx</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+	<span class="n">y_centery</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[:,</span><span class="mi">3</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+	<span class="n">y_center</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">y_centerx</span><span class="p">,</span> <span class="n">y_centery</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1"># Compute sum of Euclidean distances between first predicted point and center point</span>
+	<span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">xy1_pred</span> <span class="o">-</span> <span class="n">y_center</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+	<span class="k">return</span> <span class="n">loss</span>
 </pre></div>
 </div>
 </div>
@@ -499,27 +524,7 @@ document.write(`
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Computes the Euclidean distance between the first predicted point and the center of the ground truth points</span>
-<span class="k">def</span> <span class="nf">loss_rmse_fun</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-
-	<span class="c1"># Only get first xy point of prediction</span>
-	<span class="n">xy1_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">pred</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">pred</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span> 
-
-	<span class="c1"># Get center of two ground truth points</span>
-	<span class="n">y_centerx</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
-	<span class="n">y_centery</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[:,</span><span class="mi">3</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
-	<span class="n">y_center</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">y_centerx</span><span class="p">,</span> <span class="n">y_centery</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-
-	<span class="c1"># Compute sum of Euclidean distances between first predicted point and center point</span>
-	<span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">xy1_pred</span> <span class="o">-</span> <span class="n">y_center</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
-
-	<span class="k">return</span> <span class="n">loss</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>The function below is the main training function. It loops over the predefined number of epochs and for every epoch, trains on the whole dataset in batches with a predefined size. For every batch, the summed loss over all samples in the batch is computed. And the model is updated according to this loss. After the whole dataset passed, the average loss over all datasamples is computed to obtain the training loss. In a second pass, the model validates on the validation set and outputs a validation loss. Both are saved in an array to be visualized as learning curves later on.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This function implements the training and validation of the neural network</span>
@@ -606,6 +611,7 @@ document.write(`
 </div>
 </div>
 </div>
+<p>The code below initiates the pretrained Resnet18 model and replaces the final fully connected layer (model.fc) with an untrained fully connected layer with four outputs ([x1, y1, x2, y2]). Also the model optimizer is defined. Finally, the above function is called to start training the network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load a pretrained ResNet18 model</span>
@@ -632,87 +638,88 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 1/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 236.263
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 215.490
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 1906812.637
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 154664.181
 ----------
 Epoch 2/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 235.720
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 206.907
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 1966.451
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 12862.187
 ----------
 Epoch 3/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 232.222
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 199.728
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 299.996
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 544.750
 ----------
 Epoch 4/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 225.737
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 190.484
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 224.199
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 260.695
 ----------
 Epoch 5/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 214.425
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 185.771
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 198.576
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 201.392
 ----------
 Epoch 6/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 197.297
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 179.698
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 200.321
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 247.006
 ----------
 Epoch 7/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 187.598
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 169.462
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 161.816
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 209.614
 ----------
 Epoch 8/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 182.568
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 166.393
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 143.976
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 171.634
 ----------
 Epoch 9/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 166.321
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 153.794
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 152.618
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 159.830
 ----------
 Epoch 10/10
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 158.848
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>train_loss 135.550
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 458.876
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>val_loss 168.413
 ----------
 </pre></div>
 </div>
 </div>
 </div>
+<p>After training the network, the model is saved locally for later validation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Model name</span>
@@ -724,6 +731,7 @@ Epoch 10/10
 </div>
 </div>
 </div>
+<p>The learning curves (training and validation losses is function of the number of epochs) are visualized.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot learning curves</span>
@@ -741,10 +749,10 @@ Epoch 10/10
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1710aab79a0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1f166e4c340&gt;
 </pre></div>
 </div>
-<img alt="../_images/6e9ddf24ef491454e181d7add14a52f4f32a25e9cdb944262cf69dc8fb508822.png" src="../_images/6e9ddf24ef491454e181d7add14a52f4f32a25e9cdb944262cf69dc8fb508822.png" />
+<img alt="../_images/eca565ff2d8ba2f36ce05150017189dac5a827b9517ac0edf85a09f741e5dfb6.png" src="../_images/eca565ff2d8ba2f36ce05150017189dac5a827b9517ac0edf85a09f741e5dfb6.png" />
 </div>
 </div>
 </section>
