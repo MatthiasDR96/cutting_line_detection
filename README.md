@@ -1,4 +1,4 @@
-# Line detection
+# Cutting line detection of chicory
 
 ## Folder structure
 
@@ -18,7 +18,7 @@ In the data generation script, the software loops over all 216 entries in the .j
 
 ### Data analysis
 
-In the data analysis script, the software loops over all images in the /data/images folder and retrieves the corresponding label. To visualize the correctness of the data, it plots the image with the corresponding annotated bounding box (red) and cutting line (green). Also the cutting line in carthesian and polar coordinates that are calculated from the line encoding and decoding functions are drawn to validate the correctenn of these functions. The ground truth cutting line and calculated cutting lines need to be the same. For the encoding, the two annotated points [x1, y1], and [x2, y2] that make up the annotated line are converted to a slope and an intercept to obtain an infinite line in the image which is drawn in red. For better representation when trainig the neural network, they are converted to polar coordinates rho and theta, and further to $rho*cos(theta)$ and $rho*sin(theta)$. The calculated polar coordinates are decoded back to a slope and intercept to be able to draw them again as a line in the image, this is the violet line. If for all images, the green, red, and violet line are collinear, the encoding and decoding functions are correct. 
+In the data analysis script, the software loops over all images in the /data/images folder and retrieves the corresponding label. To visualize the correctness of the data, it plots the image with the corresponding annotated bounding box (red) and cutting line (green). Also the cutting line in carthesian coordinates is drawn in violet. 
 
 ### Data preparation
 
@@ -26,13 +26,17 @@ In the data preparation step, all data is split into training, validation, and t
 
 ### Model training  
 
-For model training we use a pretrained ResNet18 model architecture where we keep the feature layers but remove the classification layers. We add a new and untrained classification layer with two output neurons, one for prediction $rho*cos(theta)$, and one for predicting $rho*sin(theta)$. We train for 50 epochs with a batch size of 16, learning rate of 0.01 and a momentum of 0.9. 
+For model training we use a pretrained ResNet18 model architecture where we keep the feature layers but remove the classification layers. We add a new and untrained classification layer with four output neurons for predicting two points [x1, y1, x2, y2]. We train for 100 epochs with a batch size of 16, and a learning rate of 0.01. 
 
-Before being fed to the neural network, several augmentations are performed on the images and labels using the Albumentations package. Especially resizing to 224x224, normalizing and converting to a tensor are applied. The labels are also transformed and encoded in their polar representation of $rho*cos(theta)$ and $rho*sin(theta)$. As a loss function, the Root Mean Squared Error is computed for $rho*cos(theta)$ and $rho*sin(theta)$. 
+Before being fed to the neural network, several augmentations are performed on the images and labels using the Albumentations package. Especially resizing to 224x224, normalizing and converting to a tensor are applied. The labels are also transformed using the same transformations. As a loss function, a combination of two losses is used: the error between the first predicted point and the middle point of the line lable, and the angle error between the true and predicted line using cosine similarity. 
 
 ### Model validation
 
-To validate the correctness of the model visually, the software loops over all images in the test dataset and draws the ground truth line and the predicted line. Also the RMSE loss is computed. 
+To validate the correctness of the model visually, the software loops over all images in the test dataset and draws the ground truth line and the predicted line. Also the total loss is computed. 
+
+### Notebooks
+
+All notebooks can be accessed via: https://matthiasdr96.github.io/cutting_line_detection/intro.html
 
 
 
