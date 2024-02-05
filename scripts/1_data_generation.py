@@ -45,6 +45,9 @@ for i, row in df.iterrows():
             except:
                 response = 0
 
+
+        print(numpy.array(Image.open(BytesIO(response.content)).convert('RGB')).shape)
+        break
         # Get image
         img = Image.fromarray(numpy.array(Image.open(BytesIO(response.content)).convert('RGB')))
         img.save("./data/images/" + sample_id + ".jpg")
